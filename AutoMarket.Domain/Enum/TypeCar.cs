@@ -5,15 +5,15 @@ namespace AutoMarket.Domain.Enum;
 public enum TypeCar
 {
     [Display(Name = "Легковой автомобиль")]
-    PassengerCar = 0,
+    PassengerCar = (int)0,
     [Display(Name = "Седан")]
-    Sedan = 1,
+    Sedan = (int)1,
     [Display(Name = "Хэтчбек")]
-    HatchBack = 2,
+    HatchBack =(int) 2,
     [Display(Name = "Минивэн")]
-    Minivan = 3,
+    Minivan =(int) 3,
     [Display(Name = "Спортивная машина")]
-    SportsCar = 4,
+    SportsCar =(int) 4,
     [Display(Name = "Внедорожник")]
-    Suv = 5,
+    Suv = (int)5,
 }

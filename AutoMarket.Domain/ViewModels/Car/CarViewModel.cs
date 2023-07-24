@@ -1,12 +1,9 @@
-using AutoMarket.Domain.Enum;
+namespace AutoMarket.Domain.ViewModels.Car;
 
-namespace AutoMarket.Domain.Models;
-
-public class Car
+public class CarViewModel
 {
-
+    
     public int Id { get; set; }
-
     public string Name { get; set; }
 
     public string Description { get; set; }
@@ -19,7 +16,5 @@ public class Car
 
     public DateTime DateCreate { get; set; }
 
-    public TypeCar TypeCar { get; set; }
-
-
+    public string TypeCar { get; set; }
 }
