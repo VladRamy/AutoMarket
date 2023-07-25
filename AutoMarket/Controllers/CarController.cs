@@ -1,87 +1,112 @@
-using AutoMarket.DAL.Interfaces;
-using AutoMarket.Domain.Models;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMarket.Domain.Extensions;
 using AutoMarket.Domain.ViewModels.Car;
-using Automarket.Service.Interfaces;
+using AutoMarket.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AutoMarket.Controllers;
-
-public class CarController : Controller
+namespace AutoMarket.Controllers
 {
-    private readonly ICarService _carService;
-    
-    public CarController(ICarService carService)
+    public class CarController : Controller
     {
-        _carService = carService;
-    }
-    
-    [HttpGet]
-    public async Task<IActionResult> GetCars()
-    {
-        var response = await _carService.GetCars();
-        if (response.StatusCode == Domain.Enum.StatusCode.OK)
-        {
-            return View(response.Data.ToList());   
-        }
-        return RedirectToAction("Error");
-    }
+        private readonly ICarService _carService;
 
-    [HttpGet]
-    public async Task<IActionResult> GetCar(int id)
-    {
-        var response = await _carService.GetCar(id);
-        if (response.StatusCode == Domain.Enum.StatusCode.OK)
+        public CarController(ICarService carService)
         {
-            return View(response.Data);
+            _carService = carService;
         }
-        return RedirectToAction("Error");
-    }
 
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var response = await _carService.DeleteCar(id);
-        if (response.StatusCode == Domain.Enum.StatusCode.OK)
+        [HttpGet]
+        public IActionResult GetCars()
         {
+            var response = _carService.GetCars();
+            if (response.StatusCode == Domain.Enum.StatusCode.OK)
+            {
+                return View(response.Data);   
+            }
+            return View("Error", $"{response.Description}");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var response = await _carService.DeleteCar(id);
+            if (response.StatusCode == Domain.Enum.StatusCode.OK)
+            {
+                return RedirectToAction("GetCars");
+            }
+            return View("Error", $"{response.Description}");
+        }
+
+        public IActionResult Compare() => PartialView();
+        
+        [HttpGet]
+        public async Task<IActionResult> Save(int id)
+        {
+            if (id == 0) 
+                return PartialView();
+
+            var response = await _carService.GetCar(id);
+            if (response.StatusCode == Domain.Enum.StatusCode.OK)
+            {
+                return PartialView(response.Data);
+            }
+            ModelState.AddModelError("", response.Description);
+            return PartialView();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save(CarViewModel viewModel)
+        {
+            ModelState.Remove("Id");
+            ModelState.Remove("DateCreate");
+            if (ModelState.IsValid)
+            {
+                if (viewModel.Id == 0)
+                {
+                    byte[] imageData;
+                    using (var binaryReader = new BinaryReader(viewModel.Avatar.OpenReadStream()))
+                    {
+                        imageData = binaryReader.ReadBytes((int)viewModel.Avatar.Length);
+                    }
+                    await _carService.Create(viewModel, imageData);
+                }
+                else
+                {
+                    await _carService.Edit(viewModel.Id, viewModel);
+                }
+            }
             return RedirectToAction("GetCars");
         }
-
-        return RedirectToAction("Error");
-    }
-    
-    [HttpGet]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Save(int id)
-    {
-        if (id == 0)
+        
+        
+        [HttpGet]
+        public async Task<ActionResult> GetCar(int id, bool isJson)
         {
-            return View();
-        }
-
-        var response = await _carService.GetCar(id);
-        if (response.StatusCode == Domain.Enum.StatusCode.OK)
-        {
-            return View(response.Data);
-        }
-        return RedirectToAction("Error");
-    }
-    
-    [HttpPost]
-    public async Task<IActionResult> Save(CarViewModel model)
-    {
-        if (ModelState.IsValid)
-        {
-            if (model.Id == 0)
+            var response = await _carService.GetCar(id);
+            if (isJson)
             {
-                await _carService.CreateCar(model);
+                return Json(response.Data);
             }
-            else
-            {
-                await _carService.Edit(model.Id, model);
-            }
+            return PartialView("GetCar", response.Data);
         }
-
-        return RedirectToAction("GetCars");
+        
+        [HttpPost]
+        public async Task<IActionResult> GetCar(string term)
+        {
+            var response = await _carService.GetCar(term);
+            return Json(response.Data);
+        }
+        
+        [HttpPost]
+        public JsonResult GetTypes()
+        {
+            var types = _carService.GetTypes();
+            return Json(types.Data);
+        }
     }
 }

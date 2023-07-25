@@ -1,9 +1,15 @@
-namespace AutoMarket.Domain.Enum;
-
-public enum StatusCode
+namespace AutoMarket.Domain.Enum
 {
-    UserNotFound = 0,
-    CarNotFound = 10,
-    OK = 200,
-    InternalServerError = 500,
+    public enum StatusCode
+    {
+        UserNotFound = 0,
+        UserAlreadyExists = 1,
+        
+        CarNotFound = 10,
+
+        OrderNotFound = 20,
+
+        OK = 200,
+        InternalServerError = 500
+    }
 }
