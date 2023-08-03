@@ -1,16 +1,16 @@
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMarket.Domain.Models;
 
-namespace AutoMarket.DAL.Interfaces
+namespace AutoMarket.DAL.Interfaces;
+
+public interface IBaseRepository<T>
 {
-    public interface IBaseRepository<T>
-    {
-        Task Create(T entity);
+    Task<bool> Create(T entity);
 
-        IQueryable<T> GetAll();
+    Task<T> Get(int id);
 
-        Task Delete(T entity);
+    Task<List<T>> Select();
 
-        Task<T> Update(T entity);
-    }
+    Task<bool> Delete(T entity);
+
+    Task<T> Update(T entity);
 }

@@ -1,26 +1,25 @@
-using System;
 using AutoMarket.Domain.Enum;
 
-namespace AutoMarket.Domain.Models
+namespace AutoMarket.Domain.Models;
+
+public class Car
 {
-    public class Car
-    {
-        public long Id { get; set; }
-        
-        public string Name { get; set; }
-        
-        public string Description { get; set; }
-        
-        public string Model { get; set; }
-        
-        public double Speed { get; set; }
-        
-        public decimal Price { get; set; }
-        
-        public DateTime DateCreate { get; set; }
-        
-        public TypeCar TypeCar { get; set; }
-        
-        public byte[]? Avatar { get; set; }
-    }
+
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+
+    public string Description { get; set; }
+
+    public string Model { get; set; }
+
+    public double Speed { get; set; }
+
+    public decimal Price { get; set; }
+
+    public DateTime DateCreate { get; set; }
+
+    public TypeCar TypeCar { get; set; }
+
+
 }

@@ -1,12 +1,10 @@
-﻿.row {
+.row {
     margin-right: 0;
     margin-left: 0;
-    z-index: 1;
 }
 
 .card {
     box-shadow: 4px 2px 2px 3px #c82333;
-    z-index: 1;
 }
 
 .card-title {
@@ -17,12 +15,4 @@
 .card-buttons-group {
     text-align: right;
     padding: 10px;
-}
-
-.card-image {
-    filter: grayscale(1);
-    transition: 1s;
-}
-.card-image:hover {
-    filter: grayscale(0);
 }

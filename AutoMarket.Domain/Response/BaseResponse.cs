@@ -1,20 +1,20 @@
 using AutoMarket.Domain.Enum;
 
-namespace AutoMarket.Domain.Response
+namespace AutoMarket.Domain.Response;
+
+public class BaseResponse<T> : IBaseResponse<T>
 {
-    public class BaseResponse<T> : IBaseResponse<T>
-    {
-        public string Description { get; set; }        
+    
+    public string Description { get; set; }
+    
+    public StatusCode StatusCode { get; set; }
+    
+    public T Data { get; set; }
+    public StatusCode Statuscode { get; set; }
+}
 
-        public StatusCode StatusCode { get; set; }
-        
-        public T Data { get; set; }
-    }
-
-    public interface IBaseResponse<T>
-    {
-        string Description { get; }
-        StatusCode StatusCode { get; }
-        T Data { get; }
-    } 
+public interface IBaseResponse<T>
+{
+    StatusCode StatusCode { get; }
+    T Data { get; }
 }
